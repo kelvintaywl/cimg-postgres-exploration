@@ -25,13 +25,39 @@ jobs:
             sleep 5s
             # should fail on error running SQL file
             psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -f schema.sql
+  xml-function:
+    parameters:
+      image:
+        type: string
+        default: postgres:9.6
+        description: Docker image:tag for Postgres DB
+    docker:
+      - image: jbergknoff/postgresql-client
+      - image: << parameters.image >>
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: Super5ecret
+          POSTGRES_DB: exploration
+
+    steps:
+      - run:
+          name: migrate DB schema
+          command: |
+            cp .pgpass ${HOME}/.pgpass
+            chmod 0600 ${HOME}/.pgpass
+            sleep 5s
+            psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -c "SELECT xmlcomment('hello');"
+
 
 workflows:
   main:
     jobs:
-      - extension:
-          name: cimg-postgres
+      - xml-function:
+          name: cimg-postgres-9-6
           image: 'cimg/postgres:9.6'
-      - extension:
-          name: official-postgres
+      - xml-function:
+          name: cimg-postgres-14-0
+          image: 'cimg/postgres:14.0'
+      - xml-function:
+          name: postgres-9-6
           image: 'postgres:9.6'
