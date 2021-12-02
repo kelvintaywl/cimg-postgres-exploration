@@ -52,8 +52,8 @@ workflows:
   main:
     jobs:
       - xml-function:
-          name: cimg-postgres-9-6
-          image: 'cimg/postgres:9.6'
+          name: cimg-postgres-13-4
+          image: 'cimg/postgres:13.4'
       - xml-function:
           name: cimg-postgres-14-0
           image: 'cimg/postgres:14.0'
