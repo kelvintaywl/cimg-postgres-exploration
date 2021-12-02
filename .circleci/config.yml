@@ -14,7 +14,6 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Super5ecret
           POSTGRES_DB: exploration
-
     steps:
       - checkout
       - run:
@@ -38,8 +37,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: Super5ecret
           POSTGRES_DB: exploration
-
     steps:
+      - checkout
       - run:
           name: migrate DB schema
           command: |
