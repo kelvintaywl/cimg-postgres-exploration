@@ -1,29 +1,6 @@
 version: 2.1
 
 jobs:
-  extension:
-    parameters:
-      image:
-        type: string
-        default: postgres:9.6
-        description: Docker image:tag for Postgres DB
-    docker:
-      - image: jbergknoff/postgresql-client
-      - image: << parameters.image >>
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: Super5ecret
-          POSTGRES_DB: exploration
-    steps:
-      - checkout
-      - run:
-          name: migrate DB schema
-          command: |
-            cp .pgpass ${HOME}/.pgpass
-            chmod 0600 ${HOME}/.pgpass
-            sleep 5s
-            # should fail on error running SQL file
-            psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -f schema.sql
   xml-function:
     parameters:
       image:
@@ -58,5 +35,8 @@ workflows:
           name: cimg-postgres-14-0
           image: 'cimg/postgres:14.0'
       - xml-function:
-          name: postgres-9-6
-          image: 'postgres:9.6'
+          name: cimg-postgres-13-4
+          image: 'cimg/postgres:13.4-postgis'
+      - xml-function:
+          name: cimg-postgres-14-0
+          image: 'cimg/postgres:14.0-postgis'
