@@ -17,13 +17,27 @@ jobs:
     steps:
       - checkout
       - run:
-          name: migrate DB schema
+          name: set up credentials
           command: |
             cp .pgpass ${HOME}/.pgpass
             chmod 0600 ${HOME}/.pgpass
             sleep 5s
+      - run:
+          name: Check `xmlcomment` function
+          command: |
             psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -c "SELECT xmlcomment('hello');"
-
+      - run:
+          name: Check `xmlconcat` function
+          command: |
+            psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -c "SELECT xmlconcat('<abc/>', '<bar>foo</bar>');"
+      - run:
+          name: Check `xmlelement` function
+          command: |
+            psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -c "SELECT xmlelement(name foo, xmlattributes('xyz' as bar));"
+      - run:
+          name: Check `xml_is_well_formed` function
+          command: |
+            psql -v ON_ERROR_STOP=1 -U postgres -d exploration -h localhost -p 5432 -c "SET xmloption TO DOCUMENT; SELECT xml_is_well_formed('<abc/>');"
 
 workflows:
   main:
